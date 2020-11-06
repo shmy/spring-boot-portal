@@ -10,3 +10,4 @@ SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(stringKey));
 ```  
 [ ] Swagger  
 [ ] log  
+[ ] 上传文件
