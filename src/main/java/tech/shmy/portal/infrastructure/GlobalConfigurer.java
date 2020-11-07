@@ -1,6 +1,7 @@
 package tech.shmy.portal.infrastructure;
 
 import org.apache.logging.log4j.util.Strings;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
@@ -16,11 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 public class GlobalConfigurer implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        HeaderInterceptor headerInterceptor = new HeaderInterceptor();
-        registry.addInterceptor(headerInterceptor);
+        registry.addInterceptor(new I18nInterceptor());
+//        registry.addInterceptor(new PermissionInterceptor(enforcer)).addPathPatterns("/api/**");
     }
 
-    public static class HeaderInterceptor extends HandlerInterceptorAdapter {
+    public static class I18nInterceptor extends HandlerInterceptorAdapter {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
             String acceptLanguage = request.getHeader("Accept-Language");
@@ -40,4 +41,5 @@ public class GlobalConfigurer implements WebMvcConfigurer {
             return super.preHandle(request, response, handler);
         }
     }
+
 }
