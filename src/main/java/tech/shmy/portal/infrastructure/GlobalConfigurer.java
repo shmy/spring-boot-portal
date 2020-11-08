@@ -2,18 +2,21 @@ package tech.shmy.portal.infrastructure;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import tech.shmy.portal.application.service.AuthService;
 import tech.shmy.portal.application.service.LocaleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 @Configuration
 public class GlobalConfigurer implements WebMvcConfigurer {
@@ -21,31 +24,16 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     AuthService authService;
     @Autowired
     LocaleService localeService;
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new I18nInterceptor());
-        registry.addInterceptor(new JWTInterceptor(authService, localeService)).addPathPatterns("/api/**");
+
+    // 国际化配置
+    @Bean
+    public CustomLocalResolver localeResolver() {
+        return new CustomLocalResolver(Locale.SIMPLIFIED_CHINESE);
     }
 
-    public static class I18nInterceptor extends HandlerInterceptorAdapter {
-        @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-            String acceptLanguage = request.getHeader("Accept-Language");
-            String firstLanguage = "";
-            if (acceptLanguage != null) {
-                firstLanguage = acceptLanguage.split(",")[0];
-                firstLanguage = firstLanguage.trim();
-            }
-            if (Strings.isNotEmpty(firstLanguage)) {
-                LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-                if (localeResolver == null) {
-                    throw new IllegalStateException(
-                            "No LocaleResolver found: not in a DispatcherServlet request?");
-                }
-                localeResolver.setLocale(request, response, StringUtils.parseLocale(firstLanguage));
-            }
-            return super.preHandle(request, response, handler);
-        }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new JWTInterceptor(authService, localeService)).addPathPatterns("/api/**");
     }
     public static class JWTInterceptor extends HandlerInterceptorAdapter {
         AuthService authService;
@@ -90,5 +78,23 @@ public class GlobalConfigurer implements WebMvcConfigurer {
             return request.getParameter("token");
         }
     }
+    public static class CustomLocalResolver implements LocaleResolver {
+        private static final String langKey = "Language";
+        private final Locale defaultLocale;
+        public CustomLocalResolver(Locale defaultLocale) {
+            this.defaultLocale = defaultLocale;
+        }
+        @Override
+        public Locale resolveLocale(HttpServletRequest request) {
+            String langValue = request.getHeader(langKey);
+            if (langValue == null) {
+                return defaultLocale;
+            }
+            return StringUtils.parseLocale(langValue);
+        }
 
+        @Override
+        public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
+        }
+    }
 }
