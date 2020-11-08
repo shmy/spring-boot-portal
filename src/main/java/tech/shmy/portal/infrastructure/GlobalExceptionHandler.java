@@ -12,6 +12,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResultBean<Object> defaultExceptionHandler(HttpServletRequest req, Exception e) {
+        e.printStackTrace();
         return ResultBean.error(e.getMessage());
     }
 }

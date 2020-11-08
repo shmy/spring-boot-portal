@@ -1,15 +1,17 @@
 package tech.shmy.portal.application.controller;
 
+import tech.shmy.portal.application.domain.ResultBean;
+
 import java.util.List;
 
 public interface IRestController<T> {
-    public List<T> list();
+    ResultBean<List<T>> list();
 
-    public T detail(String id);
+    ResultBean<T> detail(String id);
 
-    public T create(T data);
+    ResultBean<T> create(T data);
 
-    public T update(String id, T data);
+    ResultBean<T> update(String id, T data);
 
-    public T delete(String id);
+    ResultBean<T> delete(String id);
 }
