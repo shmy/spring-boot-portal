@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import tech.shmy.portal.application.service.AuthService;
+import tech.shmy.portal.application.service.LocaleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,10 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 public class GlobalConfigurer implements WebMvcConfigurer {
     @Autowired
     AuthService authService;
+    @Autowired
+    LocaleService localeService;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new I18nInterceptor());
-        registry.addInterceptor(new JWTInterceptor(authService)).addPathPatterns("/api/**");
+        registry.addInterceptor(new JWTInterceptor(authService, localeService)).addPathPatterns("/api/**");
     }
 
     public static class I18nInterceptor extends HandlerInterceptorAdapter {
@@ -46,19 +49,22 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     }
     public static class JWTInterceptor extends HandlerInterceptorAdapter {
         AuthService authService;
-        public JWTInterceptor(AuthService authService) {
+        LocaleService localeService;
+
+        public JWTInterceptor(AuthService authService, LocaleService localeService) {
             this.authService = authService;
+            this.localeService = localeService;
         }
 
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
             String token = getToken(request);
             if (token == null) {
-                throw new Exception("Token 未携带");
+                throw new Exception(localeService.get("auth.token.required"));
             }
             Long id = authService.validateToken(token);
             if (id == null) {
-                throw new Exception("Token 无效");
+                throw new Exception(localeService.get("auth.token.invalid"));
             }
             System.out.println(id);
             return true;

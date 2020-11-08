@@ -3,6 +3,7 @@ package tech.shmy.portal.application.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +32,15 @@ public class AuthService {
     }
 
     public Long validateToken(String token) {
-        JWTVerifier verifier = JWT.require(ALGORITHM)
-                .build();
-        DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim(ID_KEY).asLong();
+        try {
+
+            JWTVerifier verifier = JWT.require(ALGORITHM)
+                    .build();
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.getClaim(ID_KEY).asLong();
+        } catch (Exception e) {
+            return null;
+        }
 
     }
 }
