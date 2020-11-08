@@ -12,7 +12,7 @@ import java.util.Date;
 @Service
 public class AuthService {
     private static final Algorithm ALGORITHM = Algorithm.HMAC256("mysecret");
-    // 过期时间： 秒
+    // 过期时间 单位：秒
     private static final int VALIDITY = 60 * 60;
     private static final String ID_KEY = "id";
 

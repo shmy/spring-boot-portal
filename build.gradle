@@ -23,6 +23,7 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	implementation 'com.auth0:java-jwt:3.11.0'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'org.casbin:casbin-spring-boot-starter:0.0.9'
 
 	compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.0'
 	compileOnly 'org.projectlombok:lombok:1.18.16'

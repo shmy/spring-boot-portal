@@ -8,42 +8,42 @@ import tech.shmy.portal.application.domain.ResultBean;
 import java.util.List;
 
 @RestController
-public class RestControllerImpl<T, S extends IService<T>> implements IRestController<T> {
-    @Autowired
-    public S service;
-
+public class RestControllerImpl<T> implements IRestController<T> {
+    public IService<T> getService() {
+        return null;
+    }
     @Override
     @GetMapping("")
     public ResultBean<List<T>> list() {
-        return ResultBean.success(service.list());
+        return ResultBean.success(getService().list());
     }
 
     @Override
     @GetMapping("{id}")
     public ResultBean<T> detail(@PathVariable String id) {
-        return ResultBean.success(service.getById(id));
+        return ResultBean.success(getService().getById(id));
     }
 
     @Override
     @PostMapping("")
     public ResultBean<T> create(@RequestBody T data) {
-        service.save(data);
+        getService().save(data);
         return ResultBean.success(data);
     }
 
     @Override
     @PutMapping("{id}")
     public ResultBean<T> update(@PathVariable String id, @RequestBody T data) {
-        service.updateById(data);
+        getService().updateById(data);
         return ResultBean.success(data);
     }
 
     @Override
     @DeleteMapping("{id}")
     public ResultBean<T> delete(@PathVariable String id) {
-        T record = service.getById(id);
+        T record = getService().getById(id);
         if (record != null) {
-            service.removeById(id);
+            getService().removeById(id);
         }
         return ResultBean.success(null);
     }

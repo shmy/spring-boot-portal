@@ -1,6 +1,7 @@
 package tech.shmy.portal.infrastructure;
 
 import org.apache.logging.log4j.util.Strings;
+import org.casbin.jcasbin.main.Enforcer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +25,8 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     AuthService authService;
     @Autowired
     LocaleService localeService;
-
+    @Autowired
+    Enforcer enforcer;
     // 国际化配置
     @Bean
     public CustomLocalResolver localeResolver() {
@@ -34,6 +36,7 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JWTInterceptor(authService, localeService)).addPathPatterns("/api/**");
+        registry.addInterceptor(new CasbinInterceptor(enforcer)).addPathPatterns("/api/**");
     }
     public static class JWTInterceptor extends HandlerInterceptorAdapter {
         AuthService authService;
@@ -54,7 +57,6 @@ public class GlobalConfigurer implements WebMvcConfigurer {
             if (id == null) {
                 throw new Exception(localeService.get("auth.token.invalid"));
             }
-            System.out.println(id);
             return true;
 //            return super.preHandle(request, response, handler);
         }
@@ -78,6 +80,20 @@ public class GlobalConfigurer implements WebMvcConfigurer {
             return request.getParameter("token");
         }
     }
+    public static class CasbinInterceptor extends HandlerInterceptorAdapter {
+        private final Enforcer enforcer;
+
+        public CasbinInterceptor(Enforcer enforcer) {
+            this.enforcer = enforcer;
+        }
+
+        @Override
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+            System.out.println(enforcer.enforce("1", "post", "detail"));
+            return super.preHandle(request, response, handler);
+        }
+    }
+
     public static class CustomLocalResolver implements LocaleResolver {
         private static final String langKey = "Language";
         private final Locale defaultLocale;
