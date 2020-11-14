@@ -17,7 +17,7 @@ public class LocaleService {
     public String get(String msgKey, @Nullable Object[] args) {
         return getWithArgs(msgKey, args);
     }
-    public String getWithArgs(String msgKey, @Nullable Object[] args) {
+    private String getWithArgs(String msgKey, @Nullable Object[] args) {
         try {
             return messageSource.getMessage(msgKey, args, LocaleContextHolder.getLocale());
         } catch (Exception e) {

@@ -12,7 +12,7 @@ import tech.shmy.portal.infrastructure.PermissionCheck;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController extends RestControllerImpl<User> {
     @Autowired
     UserService service;

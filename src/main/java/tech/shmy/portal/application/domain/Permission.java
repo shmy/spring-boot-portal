@@ -1,5 +1,6 @@
 package tech.shmy.portal.application.domain;
 
+
 public enum Permission {
     POST$LIST,
     POST$DETAIL;
