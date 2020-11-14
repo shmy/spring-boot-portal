@@ -1,10 +1,18 @@
 DROP TABLE IF EXISTS "user";
-
-CREATE TABLE "user"
+CREATE TABLE IF NOT EXISTS "user"
 (
-    id    VARCHAR(32)   NOT NULL,
-    name  VARCHAR(30) NULL DEFAULT NULL,
-    age   INT         NULL DEFAULT NULL,
-    email VARCHAR(50) NULL DEFAULT NULL,
+    id    VARCHAR(32) NOT NULL,
+    username  VARCHAR(32) NOT NULL,
+    password  VARCHAR(32) NOT NULL,
+    token  VARCHAR(255) NULL DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS "role";
+CREATE TABLE "role"
+(
+    id    VARCHAR(32)  NOT NULL,
+    name  VARCHAR(30)  NULL DEFAULT NULL,
+    intro VARCHAR(255) NULL DEFAULT NULL,
     PRIMARY KEY (id)
 );

@@ -2,7 +2,6 @@ package tech.shmy.portal.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tech.shmy.portal.application.domain.CasbinRule;
 import tech.shmy.portal.application.service.CasbinService;
 
 import java.util.List;
@@ -13,18 +12,20 @@ public class CasbinController {
     @Autowired
     private CasbinService casbinService;
 
-    @GetMapping("")
-    public List<String> getAllRoles() {
-        return casbinService.getAllRoles();
+    @PostMapping("{id}/saveUserRoleAssociation")
+    public List<String> saveUserRoleAssociation(@PathVariable("id") String userId, @RequestBody List<String> roleIds) {
+        return casbinService.saveUserRoleAssociation(userId, roleIds);
     }
-
-    @PostMapping("")
-    public CasbinRule addRoleWithPermission(@RequestBody CasbinService.Policy policy) throws Exception {
-        return casbinService.addRoleWithPermission(policy);
+    @PostMapping("{id}/saveRolePermAssociation")
+    public List<String> saveRolePermAssociation(@PathVariable("id") String roleId, @RequestBody List<String> permCodes) {
+        return casbinService.saveRolePermAssociation(roleId, permCodes);
     }
-    @PostMapping("delete")
-    public CasbinRule removePermissionForRole(@RequestBody CasbinService.Policy policy) throws Exception {
-        return casbinService.removePermissionForRole(policy);
+    @GetMapping("{id}/getPermissionsByUser")
+    public List<String> getPermissionsByUser(@PathVariable("id") String userId) {
+        return casbinService.getPermissionsByUser(userId);
     }
-//    public List<String> getPermission() {}
+    @GetMapping("{id}/getPermissionsByRole")
+    public List<String> getPermissionsByRole(@PathVariable("id") String roleId) {
+        return casbinService.getPermissionsByRole(roleId);
+    }
 }

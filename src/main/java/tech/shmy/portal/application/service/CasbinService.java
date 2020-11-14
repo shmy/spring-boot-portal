@@ -1,98 +1,70 @@
 package tech.shmy.portal.application.service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.Data;
 import org.casbin.jcasbin.main.Enforcer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tech.shmy.portal.application.domain.CasbinRule;
+import tech.shmy.portal.application.domain.Permission;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CasbinService extends ServiceImpl<CasbinRule.CasbinRuleMapper, CasbinRule> {
+public class CasbinService {
+    public static String USER_PREFIX = "user::";
+    public static String ROLE_PREFIX = "role::";
     @Autowired
     private Enforcer enforcer;
-    // 角色
-    public List<String> getAllRoles() {
-        List<CasbinRule> casbinRules = query()
-                .eq("ptype", "p")
-                .select("distinct v0")
-                .list();
-        // TODO: 获取对应角色描述
-        return casbinRules.stream().map((CasbinRule::getV0)).collect(Collectors.toList());
+    public boolean checkPermission(String userId, Permission[] permissions) {
+        for (Permission permission : permissions) {
+            if (!enforcer.enforce(USER_PREFIX + userId, permission.getObject(), permission.getAction())) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public List<String> saveUserRoleAssociation(String userId, List<String> roleIds) {
+        String subject = USER_PREFIX + userId;
+        enforcer.removeFilteredGroupingPolicy(0, subject);
+        roleIds.forEach(roleId -> {
+            roleId = ROLE_PREFIX + roleId;
+            enforcer.addGroupingPolicy(subject, roleId);
+        });
+        return roleIds;
+    }
 
+    public List<String> saveRolePermAssociation(String roleId, List<String> permCodes) {
+        enforcer.removeFilteredPolicy(0, ROLE_PREFIX + roleId);
+        permCodes.forEach(permCode -> {
+            String[] codes = permCode.split("\\.");
+            String subject = ROLE_PREFIX + roleId;
+            String object = codes[0];
+            String action = codes[1];
+            enforcer.addPolicy(subject, object, action);
+        });
+        return getPermissionsByRole(roleId);
     }
-    public CasbinRule addRoleWithPermission(Policy policy) throws Exception {
-        policy.setSubject(beautifyRoleName(policy.getSubject()));
-        if (!enforcer.addPolicy(policy.getSubject(), policy.getObject(), policy.getAction())) {
-            throw new Exception("添加失败");
+
+    public List<String> getPermissionsByUser(String userId) {
+        try {
+            return mapToPermissionList(enforcer
+                    .getImplicitPermissionsForUser(USER_PREFIX + userId));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-        return getResult(policy, "p");
     }
-    public CasbinRule updateRoleWithPermission(Policy policy, Policy newPolicy) throws Exception {
-        policy.setSubject(beautifyRoleName(policy.getSubject()));
-        newPolicy.setSubject(beautifyRoleName(newPolicy.getSubject()));
-        if (!enforcer.removePolicy(policy.getSubject(), policy.getObject(), policy.getAction())) {
-            throw new Exception("更新失败");
-        }
-        if (!enforcer.addPolicy(newPolicy.getSubject(), newPolicy.getObject(), newPolicy.getAction())) {
-            throw new Exception("更新失败");
-        }
-        return getResult(newPolicy, "p");
+
+    public List<String> getPermissionsByRole(String roleId) {
+        return mapToPermissionList(enforcer
+                .getFilteredPolicy(0, ROLE_PREFIX + roleId));
     }
-    public CasbinRule removePermissionForRole(Policy policy) throws Exception {
-        policy.setSubject(beautifyRoleName(policy.getSubject()));
-        if (!enforcer.removePolicy(policy.getSubject(), policy.getObject(), policy.getAction())) {
-            throw new Exception("删除失败");
-        }
-        return getResult(policy, "p");
-    }
-    // 用户
-    public CasbinRule addUserWithRole(Policy policy) throws Exception {
-        policy.setSubject(beautifyUserName(policy.getSubject()));
-        if (!enforcer.addGroupingPolicy(policy.getSubject(), policy.getObject(), policy.getAction())) {
-            throw new Exception("添加失败");
-        }
-        return getResult(policy, "g");
-    }
-    public CasbinRule updateUserWithRole(Policy policy, Policy newPolicy) throws Exception {
-        policy.setSubject(beautifyUserName(policy.getSubject()));
-        newPolicy.setSubject(beautifyUserName(newPolicy.getSubject()));
-        if (!enforcer.removeGroupingPolicy(policy.getSubject(), policy.getObject(), policy.getAction())) {
-            throw new Exception("更新失败");
-        }
-        if (!enforcer.addGroupingPolicy(newPolicy.getSubject(), newPolicy.getObject(), newPolicy.getAction())) {
-            throw new Exception("更新失败");
-        }
-        return getResult(newPolicy, "g");
-    }
-    public CasbinRule removeRoleForUser(Policy policy) throws Exception {
-        policy.setSubject(beautifyUserName(policy.getSubject()));
-        if (!enforcer.removeGroupingPolicy(policy.getSubject(), policy.getObject(), policy.getAction())) {
-            throw new Exception("删除失败");
-        }
-        return getResult(policy, "g");
-    }
-    private String beautifyRoleName(String name) {
-        return "role::" + name;
-    }
-    private String beautifyUserName(String name) {
-        return "user::" + name;
-    }
-    private CasbinRule getResult(Policy policy, String ptype) {
-        CasbinRule casbinRule = new CasbinRule();
-        casbinRule.setPtype(ptype);
-        casbinRule.setV0(policy.getSubject());
-        casbinRule.setV1(policy.getObject());
-        casbinRule.setV2(policy.getAction());
-        return casbinRule;
-    }
-    @Data
-    public static class Policy {
-        private String subject;
-        private String object;
-        private String action;
+
+    private List<String> mapToPermissionList(List<List<String>> input) {
+        return input
+                .stream()
+                .map((List<String> row) -> row.get(1) + "." + row.get(2))
+                .distinct()
+                .collect(Collectors.toList());
     }
 }

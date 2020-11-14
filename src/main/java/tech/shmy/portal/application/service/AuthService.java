@@ -20,7 +20,7 @@ public class AuthService {
         return VALIDITY;
     }
 
-    public String generateToken(Long id) {
+    public String generateToken(String id) {
         long currentTimeMillis = System.currentTimeMillis();
         Date now = new Date(currentTimeMillis);
         Date expiresDate = new Date(currentTimeMillis + VALIDITY * 1000);
@@ -31,13 +31,13 @@ public class AuthService {
                 .sign(ALGORITHM);
     }
 
-    public Long validateToken(String token) {
+    public String validateToken(String token) {
         try {
 
             JWTVerifier verifier = JWT.require(ALGORITHM)
                     .build();
             DecodedJWT jwt = verifier.verify(token);
-            return jwt.getClaim(ID_KEY).asLong();
+            return jwt.getClaim(ID_KEY).asString();
         } catch (Exception e) {
             return null;
         }
