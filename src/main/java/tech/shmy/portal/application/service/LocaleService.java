@@ -21,7 +21,7 @@ public class LocaleService {
         try {
             return messageSource.getMessage(msgKey, args, LocaleContextHolder.getLocale());
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: log to translate
             return msgKey;
         }
     }

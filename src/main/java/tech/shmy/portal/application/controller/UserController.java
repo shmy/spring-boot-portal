@@ -16,7 +16,6 @@ import java.util.List;
 public class UserController extends RestControllerImpl<User> {
     @Autowired
     UserService service;
-
     @Override
     public UserService getService() {
         return service;

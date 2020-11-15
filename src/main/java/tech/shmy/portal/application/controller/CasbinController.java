@@ -34,7 +34,7 @@ public class CasbinController {
     }
 
     @GetMapping("{id}/getPermsByUser")
-    public List<String> getPermsByUser(@PathVariable("id") String userId) {
+    public HashMap<String, Boolean> getPermsByUser(@PathVariable("id") String userId) {
         return casbinService.getPermsByUser(userId);
     }
 }

@@ -3,8 +3,8 @@
 [x] JWT  
 [x] pgSQL  
 [x] i18n  
-[ ] PermissionCheck  
-[ ] casbin  
-[ ] Swagger  
+[x] PermissionCheck  
+[x] casbin  
+[x] Swagger  
 [ ] log  
 [ ] 上传文件

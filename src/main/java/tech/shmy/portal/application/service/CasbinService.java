@@ -1,15 +1,15 @@
 package tech.shmy.portal.application.service;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import org.casbin.jcasbin.main.Enforcer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import tech.shmy.portal.application.domain.Permission;
 import tech.shmy.portal.application.domain.Role;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +67,8 @@ public class CasbinService {
         }
         List<Role> roles = roleService.list();
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("selected", selected);
+        HashMap<String, Boolean> includesMap = getSelectedMap(selected);
+        hashMap.put("includes", includesMap);
         hashMap.put("roles", roles);
         return hashMap;
     }
@@ -75,32 +76,32 @@ public class CasbinService {
     public HashMap<String, Object> getPermsByRole(String roleId) {
         List<String> selected = mapToPermList(enforcer
                 .getFilteredPolicy(0, ROLE_PREFIX + roleId));
-        List<Perm> perms = getAllPerms();
+        Permission[] permissions = Permission.values();
+        List<ParsedPerm> perms = parsePerms(permissions);
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("selected", selected);
+        HashMap<String, Boolean> includesMap = getSelectedMap(selected);
+        hashMap.put("includes", includesMap);
         hashMap.put("perms", perms);
         return hashMap;
     }
 
-    public List<String> getPermsByUser(String userId) {
+    public HashMap<String, Boolean> getPermsByUser(String userId) {
+        List<String> perms = new ArrayList<>();
         try {
-            return mapToPermList(enforcer
+            perms = mapToPermList(enforcer
                     .getImplicitPermissionsForUser(USER_PREFIX + userId));
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+        } catch (IllegalArgumentException ignored) {
         }
+        return getSelectedMap(perms);
     }
 
-    private List<Perm> getAllPerms() {
-        Permission[] permissions = Permission.values();
-        return Arrays.stream(permissions).map(permission -> new Perm(
-                permission.getObject() + "." + permission.getAction(),
-                localeService.get(permission.getObjectDescript()),
-                localeService.get(permission.getActionDescript())
-        )).collect(Collectors.toList());
+    private HashMap<String, Boolean> getSelectedMap(List<String> list) {
+        HashMap<String, Boolean> selectedMap = new HashMap<>();
+        list.forEach(item -> {
+            selectedMap.put(item, true);
+        });
+        return selectedMap;
     }
-
     private List<String> mapToPermList(List<List<String>> input) {
         return input
                 .stream()
@@ -108,12 +109,41 @@ public class CasbinService {
                 .distinct()
                 .collect(Collectors.toList());
     }
-
+    private List<ParsedPerm> parsePerms(Permission[] permissions) {
+        HashMap<String, ArrayList<Permission>> grouped = new HashMap<>();
+        for (Permission permission : permissions) {
+            String object = permission.getObject();
+            if (grouped.containsKey(object)) {
+                grouped.get(object).add(permission);
+            } else {
+                ArrayList<Permission> list = new ArrayList<>();
+                list.add(permission);
+                grouped.put(object, list);
+            }
+        }
+        return grouped.keySet().stream().map(key -> {
+            ParsedPerm parent = new ParsedPerm();
+            ArrayList<Permission> item = grouped.get(key);
+            parent.setName(item.get(0).getObjectName());
+            parent.setDescription(item.get(0).getObjectDescription());
+            parent.setPerms(item.stream().map(curr -> {
+                ParsedPerm child = new ParsedPerm();
+                child.setName(localeService.get(curr.getActionName()));
+                child.setDescription(localeService.get(curr.getActionDescription()));
+                child.setCode(curr.getObject() + "." + curr.getAction());
+                return child;
+            }).collect(Collectors.toList()));
+            return parent;
+        }).collect(Collectors.toList());
+    }
     @Data
-    @AllArgsConstructor
-    public static class Perm {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ParsedPerm {
+        private String name;
+        private String description;
+        @Nullable
         private String code;
-        private String objectDescription;
-        private String actionDescription;
+        @Nullable
+        private List<ParsedPerm> perms;
     }
 }
