@@ -37,7 +37,11 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 }
-
+bootJar {
+	exclude "**/application.properties"
+	exclude "**/application-dev.properties"
+	exclude "**/application-prod.properties"
+}
 test {
 	useJUnitPlatform()
 }
