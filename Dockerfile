@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/java/jre:11-zulu-alpine
+FROM adoptopenjdk/openjdk11:alpine-jre
 WORKDIR /opt/app
 ARG JAR_FILE=build/libs/portal-0.0.1-SNAPSHOT.jar
 ARG CONF_FILE=src/main/resources/application-prod.properties
