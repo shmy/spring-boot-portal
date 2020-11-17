@@ -1,0 +1,19 @@
+
+spring:
+  mvc:
+    throw-exception-if-no-handler-found: false
+  resources:
+    add-mappings: false
+  messages:
+    basename: i18n/locale
+    encoding: utf-8
+  datasource:
+    url: jdbc:postgresql://localhost:5432/root
+    username: root
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+    type: org.postgresql.jdbc2.optional.SimpleDataSource
+server:
+  port: 8080
+casbin:
+  model: classpath:model.conf

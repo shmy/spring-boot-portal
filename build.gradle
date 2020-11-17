@@ -8,6 +8,7 @@ plugins {
 group = 'tech.shmy'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+targetCompatibility = '11'
 
 repositories {
 	maven { url 'https://maven.aliyun.com/repository/central' }
@@ -38,9 +39,9 @@ dependencies {
 	}
 }
 bootJar {
-	exclude "**/application.properties"
-	exclude "**/application-dev.properties"
-	exclude "**/application-prod.properties"
+	exclude "**/application.yaml"
+	exclude "**/application-dev.yaml"
+	exclude "**/application-prod.yaml"
 }
 test {
 	useJUnitPlatform()
