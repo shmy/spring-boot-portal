@@ -1,48 +1,48 @@
 plugins {
-	id 'org.springframework.boot' version '2.3.5.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-	id "io.freefair.lombok" version "5.3.0"
-	id 'java'
+    id 'org.springframework.boot' version '2.3.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id "io.freefair.lombok" version "5.3.0"
+    id 'java'
 }
 
 group = 'tech.shmy'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-targetCompatibility = '11'
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
-	maven { url 'https://maven.aliyun.com/repository/central' }
-	maven { url 'https://maven.aliyun.com/repository/jcenter' }
-	maven { url 'https://maven.aliyun.com/repository/google' }
-	maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-	mavenCentral()
+    maven { url 'https://maven.aliyun.com/repository/central' }
+    maven { url 'https://maven.aliyun.com/repository/jcenter' }
+    maven { url 'https://maven.aliyun.com/repository/google' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.postgresql:postgresql'
-	implementation 'com.auth0:java-jwt:3.11.0'
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-	implementation 'org.casbin:casbin-spring-boot-starter:0.0.9'
-	implementation 'org.hibernate:hibernate-validator:6.0.9.Final'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.postgresql:postgresql'
+    implementation 'com.auth0:java-jwt:3.11.0'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation 'org.casbin:casbin-spring-boot-starter:0.0.9'
+    implementation 'org.hibernate:hibernate-validator:6.0.9.Final'
 
-	compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.0'
-	compileOnly 'org.projectlombok:lombok:1.18.16'
+    compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.0'
+    compileOnly 'org.projectlombok:lombok:1.18.16'
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.16'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-	}
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 bootJar {
-	exclude "**/application.yaml"
-	exclude "**/application-dev.yaml"
-	exclude "**/application-prod.yaml"
+    exclude "**/application.yaml"
+    exclude "**/application-dev.yaml"
+    exclude "**/application-prod.yaml"
 }
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
