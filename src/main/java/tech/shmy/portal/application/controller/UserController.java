@@ -20,9 +20,9 @@ public class UserController extends RestControllerImpl<User> {
         return service;
     }
 
-    @Override
-    @PreAuthorize("hasAuthority('user.list')")
-    public ResultBean<List<User>> list() {
-        return super.list();
-    }
+//    @Override
+//    @PreAuthorize("hasAuthority('user.list')")
+//    public ResultBean<List<User>> list() {
+//        return super.list();
+//    }
 }

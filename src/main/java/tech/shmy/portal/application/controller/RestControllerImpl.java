@@ -1,17 +1,16 @@
 package tech.shmy.portal.application.controller;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.shmy.portal.application.domain.ResultBean;
 
 import java.util.List;
 
-@RestController
 public class RestControllerImpl<T> implements IRestController<T> {
     public IService<T> getService() {
         return null;
     }
+
     @Override
     @GetMapping("")
     public ResultBean<List<T>> list() {
@@ -19,7 +18,7 @@ public class RestControllerImpl<T> implements IRestController<T> {
     }
 
     @Override
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResultBean<T> detail(@PathVariable String id) {
         return ResultBean.success(getService().getById(id));
     }
