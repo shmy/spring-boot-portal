@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.domain.entity.User;
+import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
 
 import java.util.Date;
 
 @Slf4j
 @Service
 public class AuthService {
+    @Autowired
+    private CombineAuthCacheServiceImpl combineAuthCacheService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -56,21 +59,7 @@ public class AuthService {
     }
 
     public String getTokenFromDB(String userId, Token.TokenType type) {
-        String redisKey = redisService.parseTokenKey(userId, Token.TokenType.WEB);
-        if (redisService.hasKey(redisKey)) {
-            log.info("get token from redis");
-            return (String) redisService.get(redisKey);
-        }
-        Token token = tokenService.getOne(
-                new QueryWrapper<Token>()
-                        .eq("user_id", userId)
-                        .eq("type", type)
-        );
-        if (token == null) {
-            return null;
-        }
-
-        return token.getToken();
+        return combineAuthCacheService.getToken(userId, type);
     }
 
     @Transactional
@@ -85,21 +74,10 @@ public class AuthService {
         if (!user.isEnabled()) {
             throw new Exception(localeService.get("auth.user.disabled"));
         }
-        String tokenStr = generateToken(user.getId());
-        Token token = new Token();
-        token.setType(Token.TokenType.WEB);
-        token.setToken(tokenStr);
-        token.setUser_id(user.getId());
-        // 更新或者创建在token表
-        tokenService.saveOrUpdate(token, new UpdateWrapper<Token>()
-                .eq("type", Token.TokenType.WEB)
-                .eq("user_id", user.getId())
-        );
-        String tokenKey = redisService.parseTokenKey(user.getId(), Token.TokenType.WEB);
-        redisService.set(tokenKey, tokenStr);
-        log.info("{}", redisService.get(tokenKey));
+        String token = generateToken(user.getId());
+        combineAuthCacheService.setToken(user.getId(), Token.TokenType.WEB, token);
         LoginResult loginResult = new LoginResult();
-        loginResult.setToken(tokenStr);
+        loginResult.setToken(token);
         loginResult.setValidity(VALIDITY);
         return loginResult;
     }
