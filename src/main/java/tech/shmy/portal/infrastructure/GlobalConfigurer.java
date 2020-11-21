@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tech.shmy.portal.infrastructure.interceptor.PermissionInterceptor;
 import tech.shmy.portal.infrastructure.resolver.AuthUserArgumentResolver;
 import tech.shmy.portal.infrastructure.interceptor.JWTInterceptor;
 import tech.shmy.portal.infrastructure.resolver.CustomLocalResolver;
@@ -17,6 +18,8 @@ import java.util.Locale;
 public class GlobalConfigurer implements WebMvcConfigurer {
     @Autowired
     JWTInterceptor jwtInterceptor;
+    @Autowired
+    PermissionInterceptor permissionInterceptor;
     // 国际化配置
     @Bean
     public CustomLocalResolver localeResolver() {
@@ -26,6 +29,9 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/auth/**");
+        registry.addInterceptor(permissionInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/auth/**");
     }

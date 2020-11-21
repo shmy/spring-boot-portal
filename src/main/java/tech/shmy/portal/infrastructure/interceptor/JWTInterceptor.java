@@ -40,7 +40,7 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         if (user == null) {
             throw new Exception(localeService.get("auth.user.not_exist"));
         }
-        String dbToken = authService.getTokenFromDB(user.getId(), Token.TokenType.WEB);
+        String dbToken = combineAuthCacheService.getToken(user.getId(), Token.TokenType.WEB);
         if (dbToken == null || !dbToken.equals(token)) {
             throw new Exception(localeService.get("auth.token.recycled"));
         }

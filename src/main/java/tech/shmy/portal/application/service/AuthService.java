@@ -5,7 +5,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,11 +25,7 @@ public class AuthService {
     @Autowired
     private UserService userService;
     @Autowired
-    private TokenService tokenService;
-    @Autowired
     private LocaleService localeService;
-    @Autowired
-    private RedisService redisService;
     private static final Algorithm ALGORITHM = Algorithm.HMAC256("mysecret");
     // 过期时间 单位：秒
     private static final int VALIDITY = 60 * 60;
@@ -58,8 +54,15 @@ public class AuthService {
 
     }
 
-    public String getTokenFromDB(String userId, Token.TokenType type) {
-        return combineAuthCacheService.getToken(userId, type);
+    public boolean checkPermission(List<String> permissions, List<String> requiredPermissions) {
+        for (String p : requiredPermissions) {
+            boolean isContains = permissions.contains(p);
+            log.info("Require permission: {}, isContains: {}", p, isContains);
+            if (!isContains) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Transactional

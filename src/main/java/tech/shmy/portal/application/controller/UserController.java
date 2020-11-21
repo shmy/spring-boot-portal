@@ -8,6 +8,9 @@ import tech.shmy.portal.application.domain.ResultBean;
 import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.interfaces.impl.RestControllerImpl;
 import tech.shmy.portal.application.service.UserService;
+import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
+
+import java.util.List;
 
 
 @Slf4j
@@ -21,9 +24,15 @@ public class UserController extends RestControllerImpl<User> {
         return service;
     }
 
-    @GetMapping("{id}/test")
-    public ResultBean<User> test(@PathVariable String id, @AuthUser User user) {
-        log.info("do get authUser: {}", user);
-        return ResultBean.success(getService().getById(id));
+    @Override
+    @PermissionCheck({"USER.CREATE", "USER.UPDATE", "USER.DELETE"})
+    public ResultBean<List<User>> list() {
+        return super.list();
+    }
+
+    @Override
+    @PermissionCheck({"USER.CREATE"})
+    public ResultBean<User> detail(@PathVariable String id) {
+        return super.detail(id);
     }
 }
