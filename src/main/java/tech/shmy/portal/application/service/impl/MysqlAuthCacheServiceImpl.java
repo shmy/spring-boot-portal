@@ -9,12 +9,17 @@ import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.interfaces.IAuthCacheService;
 import tech.shmy.portal.application.service.RedisService;
 import tech.shmy.portal.application.service.TokenService;
+import tech.shmy.portal.application.service.UserService;
+
+import java.util.List;
 
 @Slf4j
 @Service
 public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private UserService userService;
 
     @Override
     public String getToken(String userId, Token.TokenType type) {
@@ -44,4 +49,12 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
         log.info("Do set token to Mysql: userId={}, type={}, token={}", userId, type, token);
 
     }
+
+    @Override
+    public List<String> getPermissions(String userId) {
+        List<String> permissions = userService.getBaseMapper().getPermissionsById(userId);
+        log.info("Got permissions from Mysql: userId={}, permissions={}", userId, permissions);
+        return permissions;
+    }
+
 }

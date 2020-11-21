@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.interfaces.IAuthCacheService;
 
+import java.util.List;
+
 @Service
 public class CombineAuthCacheServiceImpl implements IAuthCacheService {
     @Autowired
@@ -31,6 +33,19 @@ public class CombineAuthCacheServiceImpl implements IAuthCacheService {
     public void setToken(String userId, Token.TokenType type, String token) {
         redisAuthCacheService.setToken(userId, type, token);
         mysqlAuthCacheService.setToken(userId, type, token);
+    }
+
+    @Override
+    public List<String> getPermissions(String userId) {
+        List<String> permissions = redisAuthCacheService.getPermissions(userId);
+        if (permissions != null) {
+            return permissions;
+        }
+        permissions = mysqlAuthCacheService.getPermissions(userId);
+        if (permissions != null) {
+            redisAuthCacheService.setPermissions(userId, permissions);
+        }
+        return permissions;
     }
 
 }

@@ -9,6 +9,7 @@ import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.service.AuthService;
 import tech.shmy.portal.application.service.LocaleService;
 import tech.shmy.portal.application.service.UserService;
+import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,8 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
     private AuthService authService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CombineAuthCacheServiceImpl combineAuthCacheService;
     @Autowired
     private LocaleService localeService;
 
@@ -41,9 +44,8 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         if (dbToken == null || !dbToken.equals(token)) {
             throw new Exception(localeService.get("auth.token.recycled"));
         }
-
-        log.info("set authUser: {}", user);
         request.setAttribute("authUser", user);
+        request.setAttribute("authUserPermissions", combineAuthCacheService.getPermissions(user.getId()));
         return super.preHandle(request, response, handler);
     }
 
