@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import tech.shmy.portal.application.domain.entity.User;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 public class AuthService {
     @Autowired
@@ -23,6 +25,8 @@ public class AuthService {
     private TokenService tokenService;
     @Autowired
     private LocaleService localeService;
+    @Autowired
+    private RedisService redisService;
     private static final Algorithm ALGORITHM = Algorithm.HMAC256("mysecret");
     // 过期时间 单位：秒
     private static final int VALIDITY = 60 * 60;
@@ -52,16 +56,23 @@ public class AuthService {
     }
 
     public String getTokenFromDB(String userId, Token.TokenType type) {
+        String redisKey = redisService.parseTokenKey(userId, Token.TokenType.WEB);
+        if (redisService.hasKey(redisKey)) {
+            log.info("get token from redis");
+            return (String) redisService.get(redisKey);
+        }
         Token token = tokenService.getOne(
                 new QueryWrapper<Token>()
-                .eq("user_id", userId)
-                .eq("type", type)
+                        .eq("user_id", userId)
+                        .eq("type", type)
         );
         if (token == null) {
             return null;
         }
+
         return token.getToken();
     }
+
     @Transactional
     public LoginResult login(String username, String password) throws Exception {
         QueryWrapper<User> lqw = new QueryWrapper<User>()
@@ -84,6 +95,9 @@ public class AuthService {
                 .eq("type", Token.TokenType.WEB)
                 .eq("user_id", user.getId())
         );
+        String tokenKey = redisService.parseTokenKey(user.getId(), Token.TokenType.WEB);
+        redisService.set(tokenKey, tokenStr);
+        log.info("{}", redisService.get(tokenKey));
         LoginResult loginResult = new LoginResult();
         loginResult.setToken(tokenStr);
         loginResult.setValidity(VALIDITY);
