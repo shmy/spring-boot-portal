@@ -6,6 +6,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tech.shmy.portal.application.domain.entity.Token;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Service
 public class RedisService {
@@ -13,6 +15,9 @@ public class RedisService {
     RedisTemplate<String, Object> redisTemplate;
     public void set(String key, Object val) {
         redisTemplate.opsForValue().set(key, val);
+    }
+    public void set(String key, Object val, long time, TimeUnit unit) {
+        redisTemplate.opsForValue().set(key, val, time, unit);
     }
     public boolean hasKey(String key) {
         return redisTemplate.hasKey(key);

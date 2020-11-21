@@ -8,10 +8,14 @@ import tech.shmy.portal.application.interfaces.IAuthCacheService;
 import tech.shmy.portal.application.service.RedisService;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class RedisAuthCacheServiceImpl implements IAuthCacheService {
+    private static final long TOKEN_CACHE_TIME = 1;
+    private static final long PERMISSION_CACHE_TIME = 1;
+    private static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
     @Autowired
     private RedisService redisService;
 
@@ -29,8 +33,7 @@ public class RedisAuthCacheServiceImpl implements IAuthCacheService {
     @Override
     public void setToken(String userId, Token.TokenType type, String token) {
         String key = parseTokenKey(userId, type);
-        // TODO: 有效期设置
-        redisService.set(key, token);
+        redisService.set(key, token, TOKEN_CACHE_TIME, TIME_UNIT);
         log.info("Do set token to Redis: userId={}, type={}, token={}", userId, type, token);
     }
 
@@ -47,8 +50,9 @@ public class RedisAuthCacheServiceImpl implements IAuthCacheService {
 
     public void setPermissions(String userId, List<String> permissions) {
         String key = parsePermissionKey(userId);
-        // TODO: 有效期设置
-        redisService.set(key, permissions);
+        redisService.set(key, permissions, PERMISSION_CACHE_TIME, TIME_UNIT);
+        log.info("Do set permissions to Redis: userId={}, permissions={}", userId, permissions);
+
     }
 
     private String parseTokenKey(String userId, Token.TokenType type) {
