@@ -51,6 +51,17 @@ public class AuthService {
 
     }
 
+    public String getTokenFromDB(String userId, Token.TokenType type) {
+        Token token = tokenService.getOne(
+                new QueryWrapper<Token>()
+                .eq("user_id", userId)
+                .eq("type", type)
+        );
+        if (token == null) {
+            return null;
+        }
+        return token.getToken();
+    }
     @Transactional
     public LoginResult login(String username, String password) throws Exception {
         QueryWrapper<User> lqw = new QueryWrapper<User>()

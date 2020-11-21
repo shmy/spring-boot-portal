@@ -1,7 +1,10 @@
 package tech.shmy.portal.infrastructure.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.service.AuthService;
 import tech.shmy.portal.application.service.LocaleService;
@@ -11,16 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
+@Component
 public class JWTInterceptor extends HandlerInterceptorAdapter {
-    private final AuthService authService;
-    private final UserService userService;
-    private final LocaleService localeService;
-
-    public JWTInterceptor(AuthService authService, UserService userService, LocaleService localeService) {
-        this.authService = authService;
-        this.userService = userService;
-        this.localeService = localeService;
-    }
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private LocaleService localeService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -36,9 +37,11 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         if (user == null) {
             throw new Exception(localeService.get("auth.user.not_exist"));
         }
-//            if (!user.getToken().equals(token)) {
-//                throw new Exception(localeService.get("auth.token.recycled"));
-//            }
+        String dbToken = authService.getTokenFromDB(user.getId(), Token.TokenType.WEB);
+        if (dbToken == null || !dbToken.equals(token)) {
+            throw new Exception(localeService.get("auth.token.recycled"));
+        }
+
         log.info("set authUser: {}", user);
         request.setAttribute("authUser", user);
         return super.preHandle(request, response, handler);
