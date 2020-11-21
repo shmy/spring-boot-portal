@@ -1,4 +1,4 @@
-package tech.shmy.portal.application.controller;
+package tech.shmy.portal.application.interfaces;
 
 import tech.shmy.portal.application.domain.ResultBean;
 

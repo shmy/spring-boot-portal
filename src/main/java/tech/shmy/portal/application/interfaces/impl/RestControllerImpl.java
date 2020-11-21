@@ -1,8 +1,9 @@
-package tech.shmy.portal.application.controller;
+package tech.shmy.portal.application.interfaces.impl;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.bind.annotation.*;
 import tech.shmy.portal.application.domain.ResultBean;
+import tech.shmy.portal.application.interfaces.IRestController;
 
 import java.util.List;
 
