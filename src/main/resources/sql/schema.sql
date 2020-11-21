@@ -6,7 +6,7 @@ USE `portal`;
 CREATE TABLE `user`
 (
     `id`         BIGINT UNSIGNED AUTO_INCREMENT,
-    `username`   VARCHAR(32) NOT NULL COMMENT '用户名',
+    `username`   VARCHAR(32) UNIQUE NOT NULL COMMENT '用户名',
     `password`   VARCHAR(32) NOT NULL COMMENT '密码',
     `avatar`     VARCHAR(32) NOT NULL COMMENT '头像',
     `phone`      VARCHAR(32) NOT NULL COMMENT '手机号码',

@@ -1,7 +1,6 @@
 package tech.shmy.portal.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.shmy.portal.application.domain.ResultBean;
@@ -20,9 +19,8 @@ public class UserController extends RestControllerImpl<User> {
         return service;
     }
 
-//    @Override
-//    @PreAuthorize("hasAuthority('user.list')")
-//    public ResultBean<List<User>> list() {
-//        return super.list();
-//    }
+    @Override
+    public ResultBean<List<User>> list() {
+        return super.list();
+    }
 }

@@ -23,7 +23,7 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     AuthService authService;
     @Autowired
     UserService userService;
-//    @Autowired
+    //    @Autowired
 //    CasbinService casbinService;
     @Autowired
     LocaleService localeService;
@@ -36,8 +36,9 @@ public class GlobalConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new JWTInterceptor(authService, userService, localeService)).addPathPatterns("/api/**");
-//        registry.addInterceptor(new CasbinInterceptor(casbinService)).addPathPatterns("/api/**");
+        registry.addInterceptor(new JWTInterceptor(authService, userService, localeService))
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/auth/**");
     }
 
     public static class JWTInterceptor extends HandlerInterceptorAdapter {
