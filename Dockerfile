@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
+FROM adoptopenjdk/openjdk8:alpine-jre
 WORKDIR /opt/app
 ARG JAR_FILE=build/libs/portal-0.0.1-SNAPSHOT.jar
 ARG CONF_FILE=src/main/resources/application-prod.yaml
