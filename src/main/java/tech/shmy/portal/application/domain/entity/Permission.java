@@ -8,12 +8,13 @@ import lombok.Data;
 import java.util.Date;
 
 @Data()
-@TableName(value = "role")
-public class Role {
+@TableName(value = "permission")
+public class Permission {
     @TableId(type = IdType.AUTO)
     private String id;
     private String name;
     private String description;
+    private String code;
     private boolean enabled;
     private Date created_at;
     private Date updated_at;

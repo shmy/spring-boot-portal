@@ -8,13 +8,18 @@ import lombok.Data;
 import java.util.Date;
 
 @Data()
-@TableName(value = "role")
-public class Role {
+@TableName(value = "token")
+public class Token {
     @TableId(type = IdType.AUTO)
     private String id;
-    private String name;
-    private String description;
-    private boolean enabled;
+    private TokenType type;
+    private String token;
+    private String user_id;
     private Date created_at;
     private Date updated_at;
+    public enum TokenType {
+        WEB(),
+        ANDROID(),
+        IOS(),
+    }
 }
