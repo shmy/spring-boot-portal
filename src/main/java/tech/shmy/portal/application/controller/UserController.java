@@ -7,7 +7,7 @@ import tech.shmy.portal.application.domain.Perm;
 import tech.shmy.portal.application.domain.ResultBean;
 import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.interfaces.impl.RestControllerDelegateImpl;
-import tech.shmy.portal.application.service.UserService;
+import tech.shmy.portal.application.domain.service.UserService;
 import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
 
 import java.util.List;

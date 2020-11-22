@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.shmy.portal.application.domain.Perm;
 import tech.shmy.portal.application.domain.ResultBean;
+import tech.shmy.portal.application.domain.entity.Permission;
 import tech.shmy.portal.application.domain.entity.Role;
+import tech.shmy.portal.application.domain.service.RoleService;
 import tech.shmy.portal.application.interfaces.impl.RestControllerDelegateImpl;
-import tech.shmy.portal.application.service.RoleService;
 import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.List;
 public class RoleController {
 
     private final RestControllerDelegateImpl<Role> delegate;
+    private final RoleService roleService;
 
     @Autowired
     public RoleController(RoleService roleService, RestControllerDelegateImpl<Role> delegate) {
+        this.roleService = roleService;
         this.delegate = delegate;
         this.delegate.setService(roleService);
     }
@@ -51,5 +54,12 @@ public class RoleController {
     @DeleteMapping("{id}")
     public ResultBean<Role> delete(@PathVariable String id) {
         return delegate.delete(id);
+    }
+
+    @PermissionCheck(Perm.User.DETAIL)
+    @GetMapping("{id}/permissions")
+    public ResultBean<List<Permission>> permissions(@PathVariable String id) {
+        List<Permission> permissions = roleService.getPermissions(id);
+        return ResultBean.success(permissions);
     }
 }

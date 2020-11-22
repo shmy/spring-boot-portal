@@ -19,6 +19,6 @@ public class User {
     private String avatar;
     private String phone;
     private boolean enabled;
-    private Date created_at;
-    private Date updated_at;
+    private Date createdAt;
+    private Date updatedAt;
 }

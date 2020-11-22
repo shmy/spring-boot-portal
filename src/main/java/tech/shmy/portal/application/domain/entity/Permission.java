@@ -16,6 +16,6 @@ public class Permission {
     private String description;
     private String code;
     private boolean enabled;
-    private Date created_at;
-    private Date updated_at;
+    private Date createdAt;
+    private Date updatedAt;
 }

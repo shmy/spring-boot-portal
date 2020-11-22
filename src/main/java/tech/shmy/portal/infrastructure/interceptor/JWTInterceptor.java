@@ -8,7 +8,7 @@ import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.service.AuthService;
 import tech.shmy.portal.application.service.LocaleService;
-import tech.shmy.portal.application.service.UserService;
+import tech.shmy.portal.application.domain.service.UserService;
 import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
 import tech.shmy.portal.infrastructure.Constant;
 

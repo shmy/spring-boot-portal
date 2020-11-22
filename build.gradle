@@ -31,6 +31,7 @@ dependencies {
 //    validate
     implementation 'org.hibernate:hibernate-validator:6.0.9.Final'
 
+    compile group: 'p6spy', name: 'p6spy', version: '3.9.1'
     compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.0'
     compileOnly 'org.projectlombok:lombok:1.18.16'
 

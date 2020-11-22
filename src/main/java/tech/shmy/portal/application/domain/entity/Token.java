@@ -14,9 +14,9 @@ public class Token {
     private String id;
     private TokenType type;
     private String token;
-    private String user_id;
-    private Date created_at;
-    private Date updated_at;
+    private String userId;
+    private Date createdAt;
+    private Date updatedAt;
     public enum TokenType {
         WEB(),
         ANDROID(),

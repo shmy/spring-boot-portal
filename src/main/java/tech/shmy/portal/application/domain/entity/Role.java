@@ -15,6 +15,6 @@ public class Role {
     private String name;
     private String description;
     private boolean enabled;
-    private Date created_at;
-    private Date updated_at;
+    private Date createdAt;
+    private Date updatedAt;
 }

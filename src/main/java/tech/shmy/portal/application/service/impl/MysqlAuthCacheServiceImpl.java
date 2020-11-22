@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.interfaces.IAuthCacheService;
-import tech.shmy.portal.application.service.RedisService;
-import tech.shmy.portal.application.service.TokenService;
-import tech.shmy.portal.application.service.UserService;
+import tech.shmy.portal.application.domain.service.TokenService;
+import tech.shmy.portal.application.domain.service.UserService;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
         Token tokenEntity = new Token();
         tokenEntity.setType(type);
         tokenEntity.setToken(token);
-        tokenEntity.setUser_id(userId);
+        tokenEntity.setUserId(userId);
         tokenService.saveOrUpdate(tokenEntity, new UpdateWrapper<Token>()
                 .eq("type", type)
                 .eq("user_id", userId)
