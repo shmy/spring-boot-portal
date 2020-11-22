@@ -30,7 +30,7 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
         );
         if (tokenEntity != null) {
             String token = tokenEntity.getToken();
-            log.info("Got token from Mysql: userId={}, type={}, token={}", userId, type, token);
+            log.info("Get token from Mysql: userId={}, type={}, token={}", userId, type, token);
             return tokenEntity.getToken();
         }
         return null;
@@ -46,15 +46,25 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
                 .eq("type", type)
                 .eq("user_id", userId)
         );
-        log.info("Do set token to Mysql: userId={}, type={}, token={}", userId, type, token);
+        log.info("Set token to Mysql: userId={}, type={}, token={}", userId, type, token);
 
     }
 
     @Override
     public List<String> getPermissions(String userId) {
         List<String> permissions = userService.getBaseMapper().getPermissionsById(userId);
-        log.info("Got permissions from Mysql: userId={}, permissions={}", userId, permissions);
+        log.info("Get permissions from Mysql: userId={}, permissions={}", userId, permissions);
         return permissions;
+    }
+
+    @Override
+    public void delToken(String userId, Token.TokenType type) {
+
+    }
+
+    @Override
+    public void delPermissions(String userId) {
+
     }
 
 }

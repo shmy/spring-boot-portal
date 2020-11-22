@@ -77,13 +77,17 @@ public class AuthService {
         if (!user.isEnabled()) {
             throw new Exception(localeService.get("auth.user.disabled"));
         }
+        Token.TokenType type = Token.TokenType.WEB;
+        combineAuthCacheService.delToken(user.getId(), type);
+        combineAuthCacheService.delPermissions(user.getId());
         String token = generateToken(user.getId());
-        combineAuthCacheService.setToken(user.getId(), Token.TokenType.WEB, token);
+        List<String> permissions = combineAuthCacheService.getPermissions(user.getId());
+        combineAuthCacheService.setToken(user.getId(), type, token);
         LoginResult loginResult = new LoginResult();
         loginResult.setUser(user);
         loginResult.setToken(token);
         loginResult.setValidity(VALIDITY);
-        loginResult.setPermissions(combineAuthCacheService.getPermissions(user.getId()));
+        loginResult.setPermissions(permissions);
         return loginResult;
     }
 

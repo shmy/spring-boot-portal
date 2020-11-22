@@ -48,4 +48,14 @@ public class CombineAuthCacheServiceImpl implements IAuthCacheService {
         return permissions;
     }
 
+    @Override
+    public void delToken(String userId, Token.TokenType type) {
+        redisAuthCacheService.delToken(userId, type);
+    }
+
+    @Override
+    public void delPermissions(String userId) {
+        redisAuthCacheService.delPermissions(userId);
+    }
+
 }

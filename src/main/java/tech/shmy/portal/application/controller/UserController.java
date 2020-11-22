@@ -3,7 +3,7 @@ package tech.shmy.portal.application.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tech.shmy.portal.infrastructure.annotation.AuthUser;
+import tech.shmy.portal.application.domain.Perm;
 import tech.shmy.portal.application.domain.ResultBean;
 import tech.shmy.portal.application.domain.entity.User;
 import tech.shmy.portal.application.interfaces.impl.RestControllerImpl;
@@ -25,13 +25,13 @@ public class UserController extends RestControllerImpl<User> {
     }
 
     @Override
-    @PermissionCheck({"USER.CREATE", "USER.UPDATE", "USER.DELETE"})
+    @PermissionCheck({Perm.User.DETAIL, Perm.User.CREATE, Perm.User.UPDATE, Perm.User.DELETE})
     public ResultBean<List<User>> list() {
         return super.list();
     }
 
     @Override
-    @PermissionCheck({"USER.CREATE"})
+    @PermissionCheck(Perm.User.CREATE)
     public ResultBean<User> detail(@PathVariable String id) {
         return super.detail(id);
     }
