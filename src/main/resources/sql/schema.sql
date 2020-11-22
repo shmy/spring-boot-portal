@@ -55,14 +55,18 @@ CREATE TABLE `token`
 
 CREATE TABLE `associated_role_permission`
 (
+    `id`            BIGINT UNSIGNED AUTO_INCREMENT,
     `role_id`       BIGINT UNSIGNED COMMENT '角色ID',
-    `permission_id` BIGINT UNSIGNED COMMENT '权限ID'
+    `permission_id` BIGINT UNSIGNED COMMENT '权限ID',
+    PRIMARY KEY (`id`)
 ) ENGINE = INNODB COMMENT ='角色权限中间表';
 
 CREATE TABLE `associated_role_user`
 (
+    `id`      BIGINT UNSIGNED AUTO_INCREMENT,
     `role_id` BIGINT UNSIGNED COMMENT '角色ID',
-    `user_id` BIGINT UNSIGNED COMMENT '人员ID'
+    `user_id` BIGINT UNSIGNED COMMENT '人员ID',
+    PRIMARY KEY (`id`)
 ) ENGINE = INNODB COMMENT ='角色人员中间表';
 
 # 插入人员数据
@@ -77,14 +81,16 @@ VALUES (1, '超级管理员', '系统最高权限者', 1, NOW(), NOW(), NULL),
        (3, '文员', '负责整理和录入资料', 1, NOW(), NOW(), NULL);
 # 插入权限数据
 INSERT INTO `permission`
-VALUES (1, '新增人员', '是否可以新增人员', 'USER.CREATE', 1, NOW(), NOW(), NULL),
-       (2, '更新人员', '是否可以更新人员', 'USER.UPDATE', 1, NOW(), NOW(), NULL),
-       (3, '删除/锁定人员', '是否可以删除/锁定人员', 'USER.DELETE', 1, NOW(), NOW(), NULL);
+VALUES (1, '查看人员', '是否可以查看人员', 'USER.DETAIL', 1, NOW(), NOW(), NULL),
+       (2, '创建人员', '是否可以创建人员', 'USER.CREATE', 1, NOW(), NOW(), NULL),
+       (3, '更新人员', '是否可以更新人员', 'USER.UPDATE', 1, NOW(), NOW(), NULL),
+       (4, '删除/锁定人员', '是否可以删除/锁定人员', 'USER.DELETE', 1, NOW(), NOW(), NULL);
 # 插入角色权限中间表数据
 INSERT INTO `associated_role_permission` (`role_id`, `permission_id`)
 VALUES (1, 1),
        (1, 2),
        (1, 3),
+       (1, 4),
        (2, 1),
        (2, 3),
        (3, 1);

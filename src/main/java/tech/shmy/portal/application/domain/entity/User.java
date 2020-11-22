@@ -1,24 +1,19 @@
 package tech.shmy.portal.application.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.util.Date;
+import javax.persistence.Entity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data()
-@TableName(value = "user")
-public class User {
-    @TableId(type = IdType.AUTO)
-    private String id;
-    private String username;
+@Entity(name = "user")
+public class User extends IEntity<String> {
     @JsonIgnore
+    private String username;
     private String password;
     private String avatar;
     private String phone;
     private boolean enabled;
-    private Date createdAt;
-    private Date updatedAt;
 }

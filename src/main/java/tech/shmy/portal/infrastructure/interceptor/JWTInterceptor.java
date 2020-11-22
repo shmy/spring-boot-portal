@@ -6,14 +6,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.domain.entity.User;
+import tech.shmy.portal.application.domain.repository.UserRepository;
 import tech.shmy.portal.application.service.AuthService;
 import tech.shmy.portal.application.service.LocaleService;
-import tech.shmy.portal.application.domain.service.UserService;
 import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
 import tech.shmy.portal.infrastructure.Constant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -21,7 +22,7 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private AuthService authService;
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
     @Autowired
     private CombineAuthCacheServiceImpl combineAuthCacheService;
     @Autowired
@@ -37,10 +38,11 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         if (id == null) {
             throw new Exception(localeService.get("auth.token.invalid"));
         }
-        User user = userService.getById(id);
-        if (user == null) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
             throw new Exception(localeService.get("auth.user.not_exist"));
         }
+        User user = userOptional.get();
         String dbToken = combineAuthCacheService.getToken(user.getId(), Token.TokenType.WEB);
         if (dbToken == null || !dbToken.equals(token)) {
             throw new Exception(localeService.get("auth.token.recycled"));

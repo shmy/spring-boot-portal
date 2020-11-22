@@ -1,22 +1,17 @@
 package tech.shmy.portal.application.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.util.Date;
+import javax.persistence.Entity;
 
+@EqualsAndHashCode(callSuper = true)
 @Data()
-@TableName(value = "token")
-public class Token {
-    @TableId(type = IdType.AUTO)
-    private String id;
+@Entity(name = "token")
+public class Token extends IEntity<String>  {
     private TokenType type;
     private String token;
     private String userId;
-    private Date createdAt;
-    private Date updatedAt;
     public enum TokenType {
         WEB(),
         ANDROID(),

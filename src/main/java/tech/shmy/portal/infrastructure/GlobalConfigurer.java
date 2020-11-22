@@ -31,9 +31,9 @@ public class GlobalConfigurer implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/auth/login");
-        registry.addInterceptor(permissionInterceptor)
-                .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/auth/login");
+//        registry.addInterceptor(permissionInterceptor)
+//                .addPathPatterns("/api/**")
+//                .excludePathPatterns("/api/auth/login");
     }
 
     @Override

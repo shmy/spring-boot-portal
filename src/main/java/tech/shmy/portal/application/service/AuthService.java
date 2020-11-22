@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.domain.entity.User;
-import tech.shmy.portal.application.domain.service.UserService;
+import tech.shmy.portal.application.domain.repository.UserRepository;
 import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
 
 import java.util.Date;
@@ -24,7 +23,7 @@ public class AuthService {
     @Autowired
     private CombineAuthCacheServiceImpl combineAuthCacheService;
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
     @Autowired
     private LocaleService localeService;
     private static final Algorithm ALGORITHM = Algorithm.HMAC256("mysecret");
@@ -71,10 +70,7 @@ public class AuthService {
     }
     @Transactional
     public LoginResult login(String username, String password) throws Exception {
-        QueryWrapper<User> lqw = new QueryWrapper<User>()
-                .eq("username", username)
-                .eq("password", password);
-        User user = userService.getOne(lqw);
+        User user = userRepository.findByUsernameAndPassword(username, password);
         if (user == null) {
             throw new Exception(localeService.get("auth.user.incorrect"));
         }
