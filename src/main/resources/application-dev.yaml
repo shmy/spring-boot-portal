@@ -18,9 +18,7 @@ spring:
   jpa:
     properties:
       hibernate:
-#        show_sql: true
         format_sql: true
-#        use_sql_comments: true
         database-platform: com.mysql.cj.jdbc.Driver
 server:
   port: 8080

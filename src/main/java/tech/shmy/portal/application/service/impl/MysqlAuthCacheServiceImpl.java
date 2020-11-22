@@ -8,8 +8,8 @@ import tech.shmy.portal.application.domain.repository.TokenRepository;
 import tech.shmy.portal.application.domain.repository.UserRepository;
 import tech.shmy.portal.application.interfaces.IAuthCacheService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -21,8 +21,9 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
 
     @Override
     public String getToken(String userId, Token.TokenType type) {
-        Token tokenEntity = tokenRepository.findByUserIdAndType(userId, type);
-        if (tokenEntity != null) {
+        Optional<Token> optionalToken = tokenRepository.findByUserIdAndType(userId, type);
+        if (optionalToken.isPresent()) {
+            Token tokenEntity = optionalToken.get();
             String token = tokenEntity.getToken();
             log.info("Get token from Mysql: userId={}, type={}, token={}", userId, type, token);
             return tokenEntity.getToken();
@@ -32,29 +33,32 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
 
     @Override
     public void setToken(String userId, Token.TokenType type, String token) {
-//        Token tokenEntity = new Token();
-//        tokenEntity.setType(type);
-//        tokenEntity.setToken(token);
-//        tokenEntity.setUserId(userId);
-//        tokenService.saveOrUpdate(tokenEntity, new UpdateWrapper<Token>()
-//                .eq("type", type)
-//                .eq("user_id", userId)
-//        );
+        Token tokenEntity = new Token();
+        tokenEntity.setType(type);
+        tokenEntity.setToken(token);
+        tokenEntity.setUserId(userId);
+        Optional<Token> optionalToken = tokenRepository.findByUserIdAndType(userId, type);
+        optionalToken.ifPresent(value -> {
+            tokenEntity.setId(value.getId());
+            tokenEntity.setCreatedAt(value.getCreatedAt());
+            tokenEntity.setUpdatedAt(value.getUpdatedAt());
+        });
+        tokenRepository.save(tokenEntity);
         log.info("Set token to Mysql: userId={}, type={}, token={}", userId, type, token);
 
     }
 
     @Override
     public List<String> getPermissions(String userId) {
-//        List<String> permissions = userService.getBaseMapper().getPermissionsById(userId);
-//        log.info("Get permissions from Mysql: userId={}, permissions={}", userId, permissions);
-//        return permissions;
-        return new ArrayList<>();
+        List<String> permissions = userRepository.getPermissionsById(userId);
+        log.info("Get permissions from Mysql: userId={}, permissions={}", userId, permissions);
+        return permissions;
     }
 
     @Override
     public void delToken(String userId, Token.TokenType type) {
-//        tokenService.remove(new QueryWrapper<Token>().eq("user_id", userId).eq("type", type));
+        // TODO: 避免主键增长过快，应该update token 为 null, 而不是删除
+        tokenRepository.deleteByUserIdAndType(userId, type);
         log.info("Del token from Mysql: userId={}, type={}", userId, type);
     }
 

@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity(name = "associated_role_permission")
 public class AssociatedRolePermission {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private String id;
     private String roleId;
     private String permissionId;

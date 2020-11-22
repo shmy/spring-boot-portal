@@ -1,6 +1,8 @@
 package tech.shmy.portal.application.domain.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,8 +15,10 @@ import java.util.Date;
 @MappedSuperclass
 public class IEntity<ID extends Serializable> {
     @Id()
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private ID id;
+    @CreationTimestamp
     private Date createdAt;
+    @UpdateTimestamp
     private Date updatedAt;
 }
