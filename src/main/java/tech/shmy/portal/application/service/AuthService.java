@@ -80,14 +80,18 @@ public class AuthService {
         String token = generateToken(user.getId());
         combineAuthCacheService.setToken(user.getId(), Token.TokenType.WEB, token);
         LoginResult loginResult = new LoginResult();
+        loginResult.setUser(user);
         loginResult.setToken(token);
         loginResult.setValidity(VALIDITY);
+        loginResult.setPermissions(combineAuthCacheService.getPermissions(user.getId()));
         return loginResult;
     }
 
     @Data
     public static class LoginResult {
+        private User user;
         private String token;
         private int validity;
+        private List<String> permissions;
     }
 }
