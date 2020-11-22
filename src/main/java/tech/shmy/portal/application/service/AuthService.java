@@ -64,7 +64,10 @@ public class AuthService {
         }
         return true;
     }
-
+    public void logout(String userId) {
+        combineAuthCacheService.delToken(userId, Token.TokenType.WEB);
+        combineAuthCacheService.delPermissions(userId);
+    }
     @Transactional
     public LoginResult login(String username, String password) throws Exception {
         QueryWrapper<User> lqw = new QueryWrapper<User>()

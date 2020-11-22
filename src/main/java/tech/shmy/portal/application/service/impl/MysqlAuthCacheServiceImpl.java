@@ -59,7 +59,8 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
 
     @Override
     public void delToken(String userId, Token.TokenType type) {
-
+        tokenService.remove(new QueryWrapper<Token>().eq("user_id", userId).eq("type", type));
+        log.info("Del token from Mysql: userId={}, type={}", userId, type);
     }
 
     @Override

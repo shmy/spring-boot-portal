@@ -51,6 +51,7 @@ public class CombineAuthCacheServiceImpl implements IAuthCacheService {
     @Override
     public void delToken(String userId, Token.TokenType type) {
         redisAuthCacheService.delToken(userId, type);
+        mysqlAuthCacheService.delToken(userId, type);
     }
 
     @Override
