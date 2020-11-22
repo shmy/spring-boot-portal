@@ -20,6 +20,8 @@ public class GlobalConfigurer implements WebMvcConfigurer {
     JWTInterceptor jwtInterceptor;
     @Autowired
     PermissionInterceptor permissionInterceptor;
+    @Autowired
+    AuthUserArgumentResolver authUserArgumentResolver;
     // 国际化配置
     @Bean
     public CustomLocalResolver localeResolver() {
@@ -38,6 +40,6 @@ public class GlobalConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthUserArgumentResolver());
+        resolvers.add(authUserArgumentResolver);
     }
 }

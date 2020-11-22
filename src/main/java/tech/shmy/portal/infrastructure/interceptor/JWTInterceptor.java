@@ -64,8 +64,8 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         String token = null;
         String authorizationContent = request.getHeader(Constant.HEADER_AUTHORIZATION_KEY);
         if (authorizationContent != null) {
-            String[] splitted = authorizationContent.split(" ");
-            token = splitted.length > 1 ? splitted[1] : null;
+            String[] intersected = authorizationContent.split(" ");
+            token = intersected.length > 1 ? intersected[1] : null;
         }
         return token;
     }

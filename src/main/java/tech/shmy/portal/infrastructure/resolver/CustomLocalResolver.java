@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 public class CustomLocalResolver implements LocaleResolver {
-    private static final String langKey = "Language";
+    private static final String LANGUAGE_KEY = "Language";
     private final Locale defaultLocale;
 
     public CustomLocalResolver(Locale defaultLocale) {
@@ -17,7 +17,7 @@ public class CustomLocalResolver implements LocaleResolver {
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {
-        String langValue = request.getHeader(langKey);
+        String langValue = request.getHeader(LANGUAGE_KEY);
         if (langValue == null) {
             return defaultLocale;
         }
