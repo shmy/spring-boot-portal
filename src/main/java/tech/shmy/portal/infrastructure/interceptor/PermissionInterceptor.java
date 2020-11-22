@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import tech.shmy.portal.application.service.AuthService;
+import tech.shmy.portal.infrastructure.Constant;
 import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ public class PermissionInterceptor extends HandlerInterceptorAdapter {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         List<String> requiredPermissions = findRequiredPermissions(handlerMethod);
         if (requiredPermissions.size() > 0) {
-            List<String> permissions = (List<String>) request.getAttribute("authUserPermissions");
+            List<String> permissions = (List<String>) request.getAttribute(Constant.AUTH_USER_PERMISSION_KEY);
             if (!authService.checkPermission(permissions, requiredPermissions)) {
                 throw new Exception("权限不足");
             }

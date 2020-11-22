@@ -10,6 +10,7 @@ import tech.shmy.portal.application.service.AuthService;
 import tech.shmy.portal.application.service.LocaleService;
 import tech.shmy.portal.application.service.UserService;
 import tech.shmy.portal.application.service.impl.CombineAuthCacheServiceImpl;
+import tech.shmy.portal.infrastructure.Constant;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,8 +45,8 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
         if (dbToken == null || !dbToken.equals(token)) {
             throw new Exception(localeService.get("auth.token.recycled"));
         }
-        request.setAttribute("authUser", user);
-        request.setAttribute("authUserPermissions", combineAuthCacheService.getPermissions(user.getId()));
+        request.setAttribute(Constant.AUTH_USER_KEY, user);
+        request.setAttribute(Constant.AUTH_USER_PERMISSION_KEY, combineAuthCacheService.getPermissions(user.getId()));
         return super.preHandle(request, response, handler);
     }
 
@@ -59,7 +60,7 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
 
     private String parseTokenFromHeader(HttpServletRequest request) {
         String token = null;
-        String authorizationContent = request.getHeader("Authorization");
+        String authorizationContent = request.getHeader(Constant.HEADER_AUTHORIZATION_KEY);
         if (authorizationContent != null) {
             String[] splitted = authorizationContent.split(" ");
             token = splitted.length > 1 ? splitted[1] : null;
@@ -68,6 +69,6 @@ public class JWTInterceptor extends HandlerInterceptorAdapter {
     }
 
     private String parseTokenFromQueryString(HttpServletRequest request) {
-        return request.getParameter("token");
+        return request.getParameter(Constant.QUERY_STRING_AUTHORIZATION_KEY);
     }
 }

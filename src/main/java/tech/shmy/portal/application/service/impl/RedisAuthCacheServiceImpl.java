@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tech.shmy.portal.application.domain.entity.Token;
 import tech.shmy.portal.application.interfaces.IAuthCacheService;
 import tech.shmy.portal.application.service.RedisService;
+import tech.shmy.portal.infrastructure.Constant;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +17,8 @@ public class RedisAuthCacheServiceImpl implements IAuthCacheService {
     private static final long TOKEN_CACHE_TIME = 1;
     private static final long PERMISSION_CACHE_TIME = 1;
     private static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
+    private static final String TOKEN_PREFIX = "token:";
+    private static final String PERMISSION_PREFIX = "permission:";
     @Autowired
     private RedisService redisService;
 
@@ -56,10 +59,10 @@ public class RedisAuthCacheServiceImpl implements IAuthCacheService {
     }
 
     private String parseTokenKey(String userId, Token.TokenType type) {
-        return "portal:token:" + userId + ":" + type.name();
+        return Constant.REDIS_KEY_PREFIX + TOKEN_PREFIX + userId + ":" + type.name();
     }
 
     private String parsePermissionKey(String userId) {
-        return "portal:permission:" + userId;
+        return Constant.REDIS_KEY_PREFIX + PERMISSION_PREFIX + userId;
     }
 }

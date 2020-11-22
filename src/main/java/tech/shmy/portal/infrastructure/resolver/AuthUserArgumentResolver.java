@@ -7,6 +7,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import tech.shmy.portal.infrastructure.Constant;
 import tech.shmy.portal.infrastructure.annotation.AuthUser;
 import tech.shmy.portal.application.domain.entity.User;
 
@@ -19,8 +20,6 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public User resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        User user = (User) webRequest.getAttribute("authUser", RequestAttributes.SCOPE_REQUEST);
-        log.info("get authUser: {}", user);
-        return user;
+        return (User) webRequest.getAttribute(Constant.AUTH_USER_KEY, RequestAttributes.SCOPE_REQUEST);
     }
 }
