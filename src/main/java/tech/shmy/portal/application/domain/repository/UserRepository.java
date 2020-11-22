@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, String> {
     User findByUsernameAndPassword(String username, String password);
+
     @Query(value = "SELECT `code`\n" +
             "FROM `permission`\n" +
             "WHERE `id` IN (\n" +
@@ -26,5 +27,5 @@ public interface UserRepository extends JpaRepository<User, String> {
             "      AND `enabled` = 1\n" +
             ")\n" +
             "  AND `enabled` = 1", nativeQuery = true)
-    List<String> getPermissionsById(@Param("userId") String userId);
+    List<String> getPermissionsByUser(String userId);
 }

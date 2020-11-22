@@ -50,7 +50,7 @@ public class MysqlAuthCacheServiceImpl implements IAuthCacheService {
 
     @Override
     public List<String> getPermissions(String userId) {
-        List<String> permissions = userRepository.getPermissionsById(userId);
+        List<String> permissions = userRepository.getPermissionsByUser(userId);
         log.info("Get permissions from Mysql: userId={}, permissions={}", userId, permissions);
         return permissions;
     }

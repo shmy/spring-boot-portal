@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.*;
 import tech.shmy.portal.application.domain.Perm;
 import tech.shmy.portal.application.domain.ResultBean;
+import tech.shmy.portal.application.domain.entity.Permission;
 import tech.shmy.portal.application.domain.entity.Role;
+import tech.shmy.portal.application.domain.repository.PermissionRepository;
 import tech.shmy.portal.application.domain.repository.RoleRepository;
 import tech.shmy.portal.application.interfaces.impl.RestControllerImpl;
 import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
@@ -18,6 +20,8 @@ public class RoleController extends RestControllerImpl<Role, String> {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PermissionRepository permissionRepository;
 
     @Override
     public JpaRepository<Role, String> getRepository() {
@@ -54,10 +58,10 @@ public class RoleController extends RestControllerImpl<Role, String> {
         return super.delete(id);
     }
 
-//    @PermissionCheck(Perm.Role.DETAIL)
-//    @GetMapping("{id}/permissions")
-//    public ResultBean<List<Permission>> permissions(@PathVariable String id) {
-//        List<Permission> permissions = roleService.getPermissions(id);
-//        return ResultBean.success(permissions);
-//    }
+    @PermissionCheck(Perm.Role.DETAIL)
+    @GetMapping("{id}/permissions")
+    public ResultBean<List<Permission>> permissions(@PathVariable String id) {
+        List<Permission> permissions = permissionRepository.getPermissionsByRole(id);
+        return ResultBean.success(permissions);
+    }
 }
