@@ -14,10 +14,10 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     @PostMapping("login")
-    public AuthService.LoginResult login(@RequestBody JsonNode body) throws Exception {
+    public ResultBean<AuthService.LoginResult> login(@RequestBody JsonNode body) throws Exception {
         String username = body.get("username").asText();
         String password = body.get("password").asText();
-        return authService.login(username, password);
+        return ResultBean.success(authService.login(username, password));
     }
     @GetMapping("logout")
     public ResultBean<Object> logout(@AuthUser User user) {

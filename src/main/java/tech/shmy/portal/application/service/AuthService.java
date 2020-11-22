@@ -28,13 +28,13 @@ public class AuthService {
     private LocaleService localeService;
     private static final Algorithm ALGORITHM = Algorithm.HMAC256("mysecret");
     // 过期时间 单位：秒
-    private static final int VALIDITY = 60 * 60;
+    private static final int EXPIRES_IN = 60 * 60;
     private static final String ID_KEY = "id";
 
     private String generateToken(String id) {
         long currentTimeMillis = System.currentTimeMillis();
         Date now = new Date(currentTimeMillis);
-        Date expiresDate = new Date(currentTimeMillis + VALIDITY * 1000);
+        Date expiresDate = new Date(currentTimeMillis + EXPIRES_IN * 1000);
         return JWT.create()
                 .withClaim(ID_KEY, id)
                 .withIssuedAt(now)
@@ -86,7 +86,7 @@ public class AuthService {
         LoginResult loginResult = new LoginResult();
         loginResult.setUser(user);
         loginResult.setToken(token);
-        loginResult.setValidity(VALIDITY);
+        loginResult.setExpiresIn(EXPIRES_IN);
         loginResult.setPermissions(permissions);
         return loginResult;
     }
@@ -95,7 +95,7 @@ public class AuthService {
     public static class LoginResult {
         private User user;
         private String token;
-        private int validity;
+        private int expiresIn;
         private List<String> permissions;
     }
 }
