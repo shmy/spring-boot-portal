@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tech.shmy.portal.application.domain.Perm;
 import tech.shmy.portal.application.domain.ResultBean;
 import tech.shmy.portal.application.domain.entity.Permission;
 import tech.shmy.portal.application.domain.repository.PermissionRepository;
 import tech.shmy.portal.application.interfaces.impl.RestControllerImpl;
+import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
 
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class PermissionController extends RestControllerImpl<Permission, String>
         return permissionRepository;
     }
 
-    //    @PermissionCheck({Perm.Permission.DETAIL})
+    @PermissionCheck({Perm.Permission.DETAIL})
     @GetMapping("")
     public ResultBean<List<Permission>> list() {
         return super.list();

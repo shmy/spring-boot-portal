@@ -14,6 +14,6 @@ public class Perm {
         public static final String DELETE = "ROLE.DELETE";
     }
     public static class Permission {
-        public static final String DETAIL = "ROLE.DETAIL";
+        public static final String DETAIL = "PERM.DETAIL";
     }
 }
