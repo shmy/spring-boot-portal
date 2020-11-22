@@ -16,8 +16,8 @@ import java.util.List;
 @RequestMapping("/api/roles")
 public class RoleController {
 
-    private final RestControllerDelegateImpl<Role> delegate;
     private final RoleService roleService;
+    private final RestControllerDelegateImpl<Role> delegate;
 
     @Autowired
     public RoleController(RoleService roleService, RestControllerDelegateImpl<Role> delegate) {
@@ -56,7 +56,7 @@ public class RoleController {
         return delegate.delete(id);
     }
 
-    @PermissionCheck(Perm.User.DETAIL)
+    @PermissionCheck(Perm.Role.DETAIL)
     @GetMapping("{id}/permissions")
     public ResultBean<List<Permission>> permissions(@PathVariable String id) {
         List<Permission> permissions = roleService.getPermissions(id);

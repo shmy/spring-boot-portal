@@ -10,6 +10,7 @@ import tech.shmy.portal.application.domain.entity.Permission;
 import tech.shmy.portal.application.domain.entity.Role;
 import tech.shmy.portal.application.domain.mapper.RoleMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,9 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> {
     PermissionService permissionService;
     public List<Permission> getPermissions(String roleId) {
         List<AssociatedRolePermission> associatedRolePermissions = associatedRolePermissionService.list(new QueryWrapper<AssociatedRolePermission>().eq("role_id", roleId));
-        log.info("{}", associatedRolePermissions);
+        if (associatedRolePermissions.size() == 0) {
+            return new ArrayList<>();
+        }
         List<String> permissionIds = associatedRolePermissions.stream().map(AssociatedRolePermission::getPermissionId).collect(Collectors.toList());
         return permissionService.list(new QueryWrapper<Permission>().in("id", permissionIds));
     }

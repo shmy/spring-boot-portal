@@ -22,31 +22,31 @@ public class RestControllerDelegateImpl<T> implements IRestControllerDelegate<T>
 
     @Override
     public ResultBean<List<T>> list() {
-        return ResultBean.success(service.list());
+        return ResultBean.success(getService().list());
     }
 
     @Override
     public ResultBean<T> detail(String id) {
-        return ResultBean.success(service.getById(id));
+        return ResultBean.success(getService().getById(id));
     }
 
     @Override
     public ResultBean<T> create(T data) {
-        service.save(data);
+        getService().save(data);
         return ResultBean.success(data);
     }
 
     @Override
     public ResultBean<T> update(String id, T data) {
-        service.updateById(data);
+        getService().updateById(data);
         return ResultBean.success(data);
     }
 
     @Override
     public ResultBean<T> delete(String id) {
-        T record = service.getById(id);
+        T record = getService().getById(id);
         if (record != null) {
-            service.removeById(id);
+            getService().removeById(id);
         }
         return ResultBean.success(null);
     }
