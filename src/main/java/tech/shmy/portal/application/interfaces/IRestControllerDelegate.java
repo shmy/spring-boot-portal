@@ -4,7 +4,7 @@ import tech.shmy.portal.application.domain.ResultBean;
 
 import java.util.List;
 
-public interface IRestController<T> {
+public interface IRestControllerDelegate<T> {
     ResultBean<List<T>> list();
 
     ResultBean<T> detail(String id);

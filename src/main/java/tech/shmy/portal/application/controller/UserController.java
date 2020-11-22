@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import tech.shmy.portal.application.domain.Perm;
 import tech.shmy.portal.application.domain.ResultBean;
 import tech.shmy.portal.application.domain.entity.User;
-import tech.shmy.portal.application.interfaces.impl.RestControllerImpl;
+import tech.shmy.portal.application.interfaces.impl.RestControllerDelegateImpl;
 import tech.shmy.portal.application.service.UserService;
 import tech.shmy.portal.infrastructure.annotation.PermissionCheck;
 
@@ -16,23 +16,43 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
-public class UserController extends RestControllerImpl<User> {
+public class UserController {
+
+    private final RestControllerDelegateImpl<User> delegate;
+
     @Autowired
-    UserService service;
-    @Override
-    public UserService getService() {
-        return service;
+    public UserController(UserService userService, RestControllerDelegateImpl<User> delegate) {
+        this.delegate = delegate;
+        this.delegate.setService(userService);
     }
 
-    @Override
-    @PermissionCheck({Perm.User.DETAIL, Perm.User.CREATE, Perm.User.UPDATE, Perm.User.DELETE})
+    @PermissionCheck({Perm.User.DETAIL})
+    @GetMapping("")
     public ResultBean<List<User>> list() {
-        return super.list();
+        return delegate.list();
     }
 
-    @Override
-    @PermissionCheck(Perm.User.CREATE)
+    @PermissionCheck(Perm.User.DETAIL)
+    @GetMapping("{id}")
     public ResultBean<User> detail(@PathVariable String id) {
-        return super.detail(id);
+        return delegate.detail(id);
+    }
+
+    @PermissionCheck(Perm.User.CREATE)
+    @PostMapping("")
+    public ResultBean<User> create(@RequestBody User data) {
+        return delegate.create(data);
+    }
+
+    @PermissionCheck(Perm.User.UPDATE)
+    @PutMapping("{id}")
+    public ResultBean<User> update(@PathVariable String id, @RequestBody User data) {
+        return delegate.update(id, data);
+    }
+
+    @DeleteMapping("{id}")
+    @PermissionCheck(Perm.User.DELETE)
+    public ResultBean<User> delete(@PathVariable String id) {
+        return delegate.delete(id);
     }
 }
